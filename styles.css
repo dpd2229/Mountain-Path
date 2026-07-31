@@ -837,6 +837,8 @@ button { font: inherit; }
 
 .saved-list { display: flex; flex-direction: column; gap: 8px; }
 
+.saved-transfer { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+
 .saved-item {
     display: flex;
     align-items: center;

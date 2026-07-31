@@ -197,7 +197,13 @@
 
                 <section class="panel" id="toolSaved" aria-labelledby="savedHeading">
                     <h2 class="step-heading" id="savedHeading"><span class="tool-badge" data-icon="folder"></span> Saved sessions</h2>
+                    <p class="panel-intro">Sessions are kept in this browser only. Export them to a file to move them to another device or address, or to keep a backup.</p>
                     <div id="savedSessions"></div>
+                    <div class="saved-transfer">
+                        <button type="button" class="btn btn-secondary" id="exportBtn"><span class="btn-icon" data-icon="download"></span>Export all</button>
+                        <button type="button" class="btn btn-secondary" id="importBtn"><span class="btn-icon" data-icon="upload"></span>Import</button>
+                        <input type="file" id="importFile" accept="application/json,.json" hidden>
+                    </div>
                 </section>
 
             </div>

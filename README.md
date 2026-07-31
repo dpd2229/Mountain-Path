@@ -11,7 +11,7 @@ There is no build step and nothing to install. The files need to be *served* ove
 - **Deployed:** any static host serves it as-is. The live site is https://mountain-path.vercel.app/ — `vercel.json` pins the project to no build step, serving the repo root.
 - **Locally:** from the project folder run `python3 -m http.server` and open `http://localhost:8000`.
 
-Note that saved sessions live in the browser's `localStorage`, which is tied to the exact domain. Moving the app to a new address gives it a fresh, empty store — sessions saved on the old domain stay there.
+Note that saved sessions live in the browser's `localStorage`, which is tied to the exact domain. Moving the app to a new address gives it a fresh, empty store — sessions saved on the old domain stay there. Use **Export all** on the old address and **Import** on the new one to carry them across.
 
 The only external request the page makes is for the Google Fonts stylesheet.
 
@@ -27,7 +27,7 @@ The tools are deliberately not a wizard. A QTVI can use any of them, in any orde
   - **Shape the day** — walk through the school day together and drag each point to show how that part feels. The result is a mountain range: flat where the day is easy, steep where it's hard, with snow on the hardest peaks. Labels are editable to match the real timetable, and there's a collapsible set of prompts to draw on. Ends with the closing question — *"if you could change one thing to make your day easier for your eyes"* — which prints prominently.
 - **In their own words** — verbatim quotes, typeset as pull quotes in the report. A single quote gets a whole page to itself. In *Shape the day*, up to three can be starred and pinned to a point on the path, where they print as speech bubbles.
 - **Action plan** — the part school acts on. Send a card across from the path, or add actions from scratch. Leave *Who / What / When* blank and they print as ruled lines to complete together in a meeting.
-- **Saved sessions** — name, load, duplicate and delete sessions held on this device.
+- **Saved sessions** — name, load, duplicate and delete sessions held on this device, and **export** them all to a JSON file or **import** one back. Importing never overwrites: anything already saved stays, and clashing names get a number.
 
 ## The report
 
