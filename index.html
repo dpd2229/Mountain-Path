@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mountain Path — Student Voice Studio</title>
+    <meta name="description" content="Capture a student's own view of what is comfortable and what is challenging at school, and turn it into an action plan. All data stays in your browser.">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232BBFBF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 20h18L14 6l-3.2 6.2L8.6 9z'/%3E%3Cpath d='M10.8 12.2 8.6 9 3 20'/%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div id="app">
+        <header class="app-header">
+            <div class="app-header-inner">
+                <div class="brand">
+                    <span class="brand-mark" id="brandMark"></span>
+                    <div>
+                        <h1>Mountain Path</h1>
+                        <p class="tagline">A student's own map of what's comfortable, what's a climb — and what would help.</p>
+                    </div>
+                </div>
+                <p class="privacy-note" id="privacyNote">
+                    <span class="privacy-icon"></span>
+                    Everything stays on this device — no data ever leaves your browser.
+                </p>
+            </div>
+        </header>
+
+        <nav class="tool-rail" aria-label="Studio tools">
+            <div class="tool-rail-inner">
+                <span class="tool-rail-label">Tools</span>
+                <a class="rail-pill" href="#toolAbout">About</a>
+                <a class="rail-pill" href="#toolPath">The path <span class="rail-count" id="railCountPath"></span></a>
+                <a class="rail-pill" href="#toolQuotes">Their words <span class="rail-count" id="railCountQuotes"></span></a>
+                <a class="rail-pill" href="#toolActions">Action plan <span class="rail-count" id="railCountActions"></span></a>
+                <a class="rail-pill" href="#toolSaved">Saved</a>
+            </div>
+        </nav>
+
+        <main class="app-main">
+            <div class="studio">
+
+                <section class="panel" id="toolAbout" aria-labelledby="aboutHeading">
+                    <h2 class="step-heading" id="aboutHeading"><span class="tool-badge" data-icon="person"></span> About this session</h2>
+                    <p class="panel-intro">Only the student's name or initials is needed to get going — everything else can wait.</p>
+                    <div class="form-grid">
+                        <div class="field field-small">
+                            <label for="childName">Student's name or initials</label>
+                            <input type="text" id="childName" data-field="childName" maxlength="30" autocomplete="off" placeholder="e.g. J.S.">
+                        </div>
+                        <div class="field field-small">
+                            <label for="className">Class / setting</label>
+                            <input type="text" id="className" data-field="className" maxlength="40" autocomplete="off" placeholder="e.g. Year 8, Oak Form">
+                        </div>
+                        <div class="field field-small">
+                            <label for="pronouns">Pronouns <span class="hint">— used where an adult writes about them</span></label>
+                            <select id="pronouns" data-field="pronouns">
+                                <option value="they">they / them</option>
+                                <option value="she">she / her</option>
+                                <option value="he">he / him</option>
+                            </select>
+                        </div>
+                        <div class="field field-small">
+                            <label for="sessionDate">Date of session</label>
+                            <input type="date" id="sessionDate" data-field="dateOnly">
+                        </div>
+                        <div class="field field-wide">
+                            <label for="keyMessage">Key message <span class="hint">— the one thing they most want school to hear, in their words</span></label>
+                            <input type="text" id="keyMessage" data-field="keyMessage" maxlength="160" autocomplete="off" placeholder="e.g. I can do it — I just need a bit longer to look.">
+                        </div>
+                        <div class="field field-wide">
+                            <label for="notes">Anything else worth knowing <span class="hint">— optional, written by you</span></label>
+                            <textarea id="notes" data-field="notes" rows="2" maxlength="400" placeholder="e.g. Took part enthusiastically; found the PE cards hardest to talk about."></textarea>
+                        </div>
+                        <div class="field field-small">
+                            <label for="qtviName">QTVI name</label>
+                            <input type="text" id="qtviName" data-field="qtviName" maxlength="60" autocomplete="off" placeholder="e.g. D. Downes, QTVI">
+                        </div>
+                        <div class="field field-small">
+                            <label for="qtviContact">QTVI contact</label>
+                            <input type="text" id="qtviContact" data-field="qtviContact" maxlength="80" autocomplete="off" placeholder="e.g. d.downes@service.org.uk">
+                        </div>
+                    </div>
+                </section>
+
+                <section class="panel" id="toolPath" aria-labelledby="pathHeading">
+                    <h2 class="step-heading" id="pathHeading">
+                        <span class="tool-badge" data-icon="route"></span> The path
+                        <span class="selection-count" id="pathCount" aria-live="polite"></span>
+                    </h2>
+                    <p class="panel-intro" id="pathIntro"></p>
+
+                    <div class="mode-switch" role="group" aria-label="How to build the path">
+                        <button type="button" class="mode-option" data-mode="cards" aria-pressed="true">
+                            <span class="mode-name">Sort the cards</span>
+                            <span class="mode-desc">Place statements from comfortable to very challenging</span>
+                        </button>
+                        <button type="button" class="mode-option" data-mode="day" aria-pressed="false">
+                            <span class="mode-name">Shape the day</span>
+                            <span class="mode-desc">Build the terrain of the school day together</span>
+                        </button>
+                    </div>
+
+                    <div id="dayTool" hidden>
+                        <details class="prompt-guide">
+                            <summary>Things you might ask <span class="hint">— for you, never printed</span></summary>
+                            <div id="promptList" class="prompt-list"></div>
+                        </details>
+
+                        <div class="day-canvas-wrap">
+                            <div class="day-controls">
+                                <button type="button" class="btn btn-ghost btn-small" id="dayLabelsToggle">Hide labels</button>
+                                <button type="button" class="btn btn-ghost btn-small" id="dayReset">Reset the path</button>
+                                <span class="day-hint">Drag the handles, or use the arrow keys. Tap a label to rename it.</span>
+                            </div>
+                            <div id="dayCanvas" class="day-canvas"></div>
+                        </div>
+
+                        <div class="field closing-field">
+                            <label for="closingQuestion" id="closingLabel"></label>
+                            <textarea id="closingQuestion" rows="2" maxlength="300" placeholder="Their answer, in their own words…"></textarea>
+                        </div>
+                    </div>
+
+                    <div id="cardsTool">
+                    <div class="path-head">
+                        <div class="field field-small">
+                            <label for="pathLabelA" id="pathLabelALabel">Which subject or context?</label>
+                            <input type="text" id="pathLabelA" maxlength="40" autocomplete="off" placeholder="e.g. Maths">
+                        </div>
+                        <div class="field field-small path-compare-field">
+                            <label class="toggle"><input type="checkbox" id="compareEnabled" data-field="compareEnabled"> Compare with a second subject or context</label>
+                            <input type="text" id="pathLabelB" maxlength="40" autocomplete="off" placeholder="e.g. Art" hidden>
+                        </div>
+                    </div>
+
+                    <div class="path-tabs" id="pathTabs" role="tablist" hidden></div>
+
+                    <div class="deck-block">
+                        <h3 class="mini-heading">Cards to place <span class="hint" id="deckRemaining"></span></h3>
+                        <div class="card-deck" id="cardDeck"></div>
+                        <form class="custom-card" id="customCardForm">
+                            <label class="visually-hidden" for="customCardInput">Create your own card</label>
+                            <input type="text" id="customCardInput" maxlength="90" autocomplete="off" placeholder="Create your own card — in the student's words…">
+                            <button type="submit" class="btn btn-secondary"><span class="btn-icon" data-icon="plus"></span>Add card</button>
+                        </form>
+                    </div>
+
+                    <div class="path-canvas-wrap">
+                        <div class="path-canvas" id="pathCanvas"></div>
+                    </div>
+
+                    <div id="cardDrawer" class="card-drawer" hidden></div>
+                    </div>
+                </section>
+
+                <section class="panel" id="toolQuotes" aria-labelledby="quotesHeading">
+                    <h2 class="step-heading" id="quotesHeading">
+                        <span class="tool-badge" data-icon="quote"></span> In their own words
+                        <span class="selection-count" id="quotesCount" aria-live="polite"></span>
+                    </h2>
+                    <p class="panel-intro">Type what the student actually said, as closely as you can. Their words carry the report. Star up to three to pin them to the path itself.</p>
+                    <form class="quote-composer" id="quoteForm">
+                        <div class="field">
+                            <label class="visually-hidden" for="quoteText">What they said</label>
+                            <textarea id="quoteText" rows="3" maxlength="400" placeholder="Type exactly what they said…"></textarea>
+                        </div>
+                        <div class="quote-composer-row">
+                            <div class="field field-grow">
+                                <label class="visually-hidden" for="quoteContext">When or where they said it</label>
+                                <input type="text" id="quoteContext" maxlength="80" autocomplete="off" placeholder="When or where — e.g. talking about Maths">
+                            </div>
+                            <div class="quote-tags" role="group" aria-label="Tag this quote">
+                                <button type="button" class="tag-pill" data-tag="comfort" aria-pressed="false"><span class="dot" style="background:#15803d"></span>Going well</button>
+                                <button type="button" class="tag-pill" data-tag="challenge" aria-pressed="false"><span class="dot" style="background:#b91c1c"></span>Tricky</button>
+                                <button type="button" class="tag-pill" data-tag="" aria-pressed="true"><span class="dot" style="background:#8a8077"></span>General</button>
+                            </div>
+                            <button type="submit" class="btn btn-primary"><span class="btn-icon" data-icon="plus"></span>Add quote</button>
+                        </div>
+                    </form>
+                    <div id="quoteList" class="quote-list"></div>
+                </section>
+
+                <section class="panel" id="toolActions" aria-labelledby="actionsHeading">
+                    <h2 class="step-heading" id="actionsHeading">
+                        <span class="tool-badge" data-icon="clipboard"></span> Action plan
+                        <span class="selection-count" id="actionsCount" aria-live="polite"></span>
+                    </h2>
+                    <p class="panel-intro">The part school acts on. Add actions here, or send a card across from the path using <strong>Add to action plan</strong>. Leave Who / What / When blank to print ruled lines and fill them in together.</p>
+                    <div id="actionList" class="action-list"></div>
+                    <button type="button" class="btn btn-secondary" id="addActionBtn"><span class="btn-icon" data-icon="plus"></span>Add an action</button>
+                </section>
+
+                <section class="panel" id="toolSaved" aria-labelledby="savedHeading">
+                    <h2 class="step-heading" id="savedHeading"><span class="tool-badge" data-icon="folder"></span> Saved sessions</h2>
+                    <div id="savedSessions"></div>
+                </section>
+
+            </div>
+
+            <aside class="preview-pane" aria-label="Document preview">
+                <div class="preview-actions">
+                    <button class="btn btn-primary" id="printBtn"><span class="btn-icon" data-icon="printer"></span>Print / Save as PDF</button>
+                    <button class="btn btn-secondary" id="saveBtn"><span class="btn-icon" data-icon="save"></span>Save session</button>
+                    <button class="btn btn-ghost" id="clearBtn"><span class="btn-icon" data-icon="eraser"></span>Start again</button>
+                </div>
+                <div class="output-toggles">
+                    <label class="toggle"><input type="checkbox" id="includePathPage" data-field="includePathPage"> Path page</label>
+                    <label class="toggle"><input type="checkbox" id="includeQuotesPage" data-field="includeQuotesPage"> Their words</label>
+                    <label class="toggle"><input type="checkbox" id="includeActionPage" data-field="includeActionPage"> Action plan</label>
+                    <label class="toggle"><input type="checkbox" id="includeHelpsDetail" data-field="includeHelpsDetail"> Full "what would help" list</label>
+                </div>
+                <p class="preview-hint">Live preview of the printed report. In the print dialog choose <strong>Save as PDF</strong>, paper size <strong>A4</strong>, and turn <strong>headers &amp; footers off</strong>.</p>
+                <div class="preview-viewport">
+                    <div class="preview-pages" id="previewPages"></div>
+                </div>
+            </aside>
+        </main>
+
+        <footer class="app-footer">
+            <p>Mountain Path &copy; D. Downes 2025 &middot; All session data is stored only in this browser.</p>
+        </footer>
+    </div>
+
+    <dialog id="saveDialog">
+        <form method="dialog" class="dialog-form">
+            <h2>Save this session</h2>
+            <div class="field">
+                <label for="sessionSaveName">Session name</label>
+                <input type="text" id="sessionSaveName" maxlength="60" autocomplete="off" placeholder="e.g. J.S. — Autumn review">
+            </div>
+            <p class="dialog-note">Saved sessions live only in this browser, on this device.</p>
+            <div class="dialog-actions">
+                <button type="button" class="btn btn-ghost" id="saveDialogCancel">Cancel</button>
+                <button type="submit" class="btn btn-primary" id="saveDialogConfirm">Save</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="placeSheet" class="place-sheet">
+        <h2 id="placeSheetTitle">Where does this go?</h2>
+        <p class="place-sheet-card" id="placeSheetCard"></p>
+        <div class="place-sheet-options" id="placeSheetOptions"></div>
+        <button type="button" class="btn btn-ghost" id="placeSheetCancel">Cancel</button>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <!-- The printable document. Hidden on screen (the preview shows a live copy); the only thing visible when printing. -->
+    <section id="print-document" aria-hidden="true"></section>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
