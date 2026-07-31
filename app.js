@@ -8,7 +8,7 @@ import {
 import { ICONS, QUOTE_ORNAMENT } from "./icons.js";
 import {
     BASELINE_Y, MAX_VALUE, PEAK_Y, PRINT_BASELINE_Y, SNOW_THRESHOLD, TRACK_BOTTOM, TRACK_TOP,
-    X_POSITIONS, catmullRomPath, sliderY, snowCapPath, summitIndex, terrainFill, valueToY, yToValue,
+    X_POSITIONS, catmullRomPath, sliderY, snowCapPath, summitIndex, terrainFill, valueToY,
 } from "./path-geometry.js";
 
 const STORAGE_KEY = "mountainPathSessions";
@@ -585,10 +585,12 @@ function dayPathSvg({ interactive }) {
         ${X_POSITIONS.map((x) => `<line x1="${x}" y1="${TRACK_TOP}" x2="${x}" y2="${TRACK_BOTTOM}" stroke="#1f1a17" stroke-width="0.6" opacity="0.18"/>`).join("")}
         ${X_POSITIONS.map((x, i) => i === 0
             ? `<rect x="${x - 4}" y="308" width="8" height="8" rx="1.5" fill="#F5F3EF" stroke="#1f1a17" stroke-width="1"/>`
-            : `<circle class="day-handle" data-handle="${i}" tabindex="0" role="slider"
+            : `<g class="day-handle" data-handle="${i}" tabindex="0" role="slider"
                    aria-label="${esc(labels[i] || `Point ${i + 1}`)}" aria-valuemin="0" aria-valuemax="${MAX_VALUE}"
-                   aria-valuenow="${values[i]}" cx="${x}" cy="${sliderY(values[i])}" r="6"
-                   fill="#2BBFBF" stroke="#1f1a17" stroke-width="0.8"/>`).join("")}
+                   aria-valuenow="${values[i]}" aria-valuetext="${values[i]} out of ${MAX_VALUE}">
+                   <circle cx="${x}" cy="${sliderY(values[i])}" r="20" fill="transparent"/>
+                   <circle cx="${x}" cy="${sliderY(values[i])}" r="6" fill="#2BBFBF" stroke="#1f1a17" stroke-width="0.8"/>
+               </g>`).join("")}
         <g transform="translate(60, 308)" opacity="0.55">
             <rect x="0" y="2.4" width="5.4" height="4.6" rx="0.7" fill="none" stroke="#1f1a17" stroke-width="0.7"/>
             <path d="M 1 2.4 V 1.3 a 1.7 1.7 0 0 1 3.4 0 V 2.4" fill="none" stroke="#1f1a17" stroke-width="0.7"/>
@@ -663,34 +665,42 @@ function renderDayCanvas() {
 
     $("#dayLabelsToggle").textContent = session.day.labelsVisible ? "Hide labels" : "Show labels";
 
-    const valueFromClientY = (clientY) => {
+    // How far the finger must travel for one step. The track is only 58 units
+    // of a 360-unit viewBox, so on a narrow screen its true size is a few
+    // pixels per step — unusable by touch. Below that floor we trade exact
+    // handle-following for a range a person can actually reach.
+    const pxPerStep = () => {
         const rect = svg.getBoundingClientRect();
-        return yToValue(((clientY - rect.top) / rect.height) * 360);
+        const trueStep = ((TRACK_BOTTOM - TRACK_TOP) * (rect.height / 360)) / MAX_VALUE;
+        return Math.max(trueStep, 7);
     };
 
     canvas.querySelectorAll(".day-handle").forEach((handle) => {
         const index = Number(handle.dataset.handle);
 
-        const startDrag = (e) => {
+        // Dragging is relative to where the handle was grabbed, so the value
+        // never jumps to wherever the finger happens to land.
+        // Listeners go on the window, not the handle: changing a value redraws
+        // the whole canvas, so the element under the finger is replaced mid-drag.
+        handle.addEventListener("pointerdown", (e) => {
             e.preventDefault();
+            const startY = e.clientY;
+            const startValue = session.day.values[index];
+            const step = pxPerStep();
+
             const move = (ev) => {
-                const y = ev.touches ? ev.touches[0].clientY : ev.clientY;
-                setDayValue(index, valueFromClientY(y));
+                setDayValue(index, startValue + Math.round((startY - ev.clientY) / step));
             };
             const end = () => {
-                window.removeEventListener("mousemove", move);
-                window.removeEventListener("mouseup", end);
-                window.removeEventListener("touchmove", move);
-                window.removeEventListener("touchend", end);
+                window.removeEventListener("pointermove", move);
+                window.removeEventListener("pointerup", end);
+                window.removeEventListener("pointercancel", end);
+                focusHandle(index);
             };
-            window.addEventListener("mousemove", move);
-            window.addEventListener("mouseup", end);
-            window.addEventListener("touchmove", move, { passive: false });
-            window.addEventListener("touchend", end);
-        };
-
-        handle.addEventListener("mousedown", startDrag);
-        handle.addEventListener("touchstart", startDrag, { passive: false });
+            window.addEventListener("pointermove", move);
+            window.addEventListener("pointerup", end);
+            window.addEventListener("pointercancel", end);
+        });
 
         // Arrow keys give the same control without a pointer.
         handle.addEventListener("keydown", (e) => {
@@ -1538,6 +1548,95 @@ function deleteSession(id) {
 }
 
 // ---------------------------------------------------------------------------
+// Export / import — the only way sessions move between devices or addresses,
+// since localStorage belongs to one browser on one domain.
+// ---------------------------------------------------------------------------
+
+const EXPORT_KIND = "mountain-path-sessions";
+
+function exportSessions() {
+    if (!savedSessions.length) {
+        toast("Nothing to export yet — save a session first");
+        return;
+    }
+    const payload = {
+        kind: EXPORT_KIND,
+        schemaVersion: SCHEMA_VERSION,
+        exportedAt: new Date().toISOString(),
+        sessions: savedSessions,
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `mountain-path-sessions-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast(`Exported ${savedSessions.length} session${savedSessions.length === 1 ? "" : "s"}`);
+}
+
+// Accepts either a full export file or a bare array of sessions, so a
+// hand-edited or older file still opens.
+function sessionsFromFile(parsed) {
+    const list = Array.isArray(parsed) ? parsed
+        : Array.isArray(parsed?.sessions) ? parsed.sessions
+        : null;
+    if (!list) return null;
+    return list.filter((s) => s && typeof s === "object").map(normaliseSession);
+}
+
+function importSessions(text) {
+    let parsed;
+    try {
+        parsed = JSON.parse(text);
+    } catch {
+        toast("That file isn't valid JSON");
+        return;
+    }
+    const incoming = sessionsFromFile(parsed);
+    if (!incoming) {
+        toast("That file doesn't hold any Mountain Path sessions");
+        return;
+    }
+    if (!incoming.length) {
+        toast("That file is empty");
+        return;
+    }
+
+    // Never overwrite what is already here: clashing ids and names are given
+    // fresh ones so an import can always be undone by deleting the copies.
+    const takenIds = new Set(savedSessions.map((s) => s.id));
+    const takenNames = new Set(savedSessions.map((s) => s.name));
+    for (const s of incoming) {
+        if (!s.id || takenIds.has(s.id)) s.id = Date.now() + Math.floor(Math.random() * 1000);
+        takenIds.add(s.id);
+        let name = s.name || "Untitled session";
+        if (takenNames.has(name)) {
+            let n = 2;
+            while (takenNames.has(`${name} (${n})`)) n++;
+            name = `${name} (${n})`;
+        }
+        s.name = name;
+        takenNames.add(name);
+        savedSessions.push(s);
+    }
+    persistSessions();
+    renderSavedSessions();
+    toast(`Imported ${incoming.length} session${incoming.length === 1 ? "" : "s"}`);
+}
+
+function setupTransfer() {
+    $("#exportBtn").addEventListener("click", exportSessions);
+    $("#importBtn").addEventListener("click", () => $("#importFile").click());
+    $("#importFile").addEventListener("change", async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        importSessions(await file.text());
+        e.target.value = ""; // let the same file be picked again
+    });
+}
+
+// ---------------------------------------------------------------------------
 // Actions: save dialog, print, clear, toast
 // ---------------------------------------------------------------------------
 
@@ -1666,6 +1765,7 @@ function init() {
     setupQuoteComposer();
     setupPlaceSheet();
     setupDayTool();
+    setupTransfer();
     renderPrompts();
     renderAllTools();
     renderSavedSessions();
