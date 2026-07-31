@@ -20,8 +20,10 @@ The only external request the page makes is for the Google Fonts stylesheet.
 The tools are deliberately not a wizard. A QTVI can use any of them, in any order, and whatever they fill in flows into the same report:
 
 - **About this session** — the student's name or initials, class, and the key message they most want school to hear.
-- **The path** — the heart of it. Place cards along a five-station path from *Very Comfortable* to *Very Challenging*. Tap a card then tap a station, or drag it across. Open any placed card to record what the student thinks would help, with suggestion chips as starting points. Comparing two subjects is opt-in.
-- **In their own words** — verbatim quotes, typeset as pull quotes in the report. A single quote gets a whole page to itself.
+- **The path** — the heart of it, and there are two ways to build one. Pick whichever suits the student:
+  - **Sort the cards** — place statements along a five-station path from *Very Comfortable* to *Very Challenging*. Tap a card then tap a station, or drag it across. Open any placed card to record what the student thinks would help, with suggestion chips as starting points. Comparing two subjects is opt-in.
+  - **Shape the day** — walk through the school day together and drag each point to show how that part feels. The result is a mountain range: flat where the day is easy, steep where it's hard, with snow on the hardest peaks. Labels are editable to match the real timetable, and there's a collapsible set of prompts to draw on. Ends with the closing question — *"if you could change one thing to make your day easier for your eyes"* — which prints prominently.
+- **In their own words** — verbatim quotes, typeset as pull quotes in the report. A single quote gets a whole page to itself. In *Shape the day*, up to three can be starred and pinned to a point on the path, where they print as speech bubbles.
 - **Action plan** — the part school acts on. Send a card across from the path, or add actions from scratch. Leave *Who / What / When* blank and they print as ruled lines to complete together in a meeting.
 - **Saved sessions** — name, load, duplicate and delete sessions held on this device.
 
@@ -38,8 +40,11 @@ Pages are generated as needed: the path figure, the full "what would help" list 
 | `index.html` | Page shell, studio panels, preview pane, dialogs |
 | `styles.css` | Part 1 screen UI · Part 2 document · Part 3 print |
 | `app.js` | State, storage, the tools, and document rendering |
-| `data.js` | Card statements, band definitions, suggestions |
+| `data.js` | Card statements, band definitions, suggestions, day labels and prompts |
+| `path-geometry.js` | The day path's curve, snow caps and terrain fill |
 | `icons.js` | Inline SVG icon set |
+
+The day path's geometry is ported from the enVIro build so both tools draw the same mountain.
 
 ---
 

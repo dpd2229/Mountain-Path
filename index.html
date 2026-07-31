@@ -92,8 +92,41 @@
                         <span class="tool-badge" data-icon="route"></span> The path
                         <span class="selection-count" id="pathCount" aria-live="polite"></span>
                     </h2>
-                    <p class="panel-intro">Place each card where the student says it belongs — from the gentle start of the path to the steepest climb. Tap a card, then tap a station; or drag it across.</p>
+                    <p class="panel-intro" id="pathIntro"></p>
 
+                    <div class="mode-switch" role="group" aria-label="How to build the path">
+                        <button type="button" class="mode-option" data-mode="cards" aria-pressed="true">
+                            <span class="mode-name">Sort the cards</span>
+                            <span class="mode-desc">Place statements from comfortable to very challenging</span>
+                        </button>
+                        <button type="button" class="mode-option" data-mode="day" aria-pressed="false">
+                            <span class="mode-name">Shape the day</span>
+                            <span class="mode-desc">Build the terrain of the school day together</span>
+                        </button>
+                    </div>
+
+                    <div id="dayTool" hidden>
+                        <details class="prompt-guide">
+                            <summary>Things you might ask <span class="hint">— for you, never printed</span></summary>
+                            <div id="promptList" class="prompt-list"></div>
+                        </details>
+
+                        <div class="day-canvas-wrap">
+                            <div class="day-controls">
+                                <button type="button" class="btn btn-ghost btn-small" id="dayLabelsToggle">Hide labels</button>
+                                <button type="button" class="btn btn-ghost btn-small" id="dayReset">Reset the path</button>
+                                <span class="day-hint">Drag the handles, or use the arrow keys. Tap a label to rename it.</span>
+                            </div>
+                            <div id="dayCanvas" class="day-canvas"></div>
+                        </div>
+
+                        <div class="field closing-field">
+                            <label for="closingQuestion" id="closingLabel"></label>
+                            <textarea id="closingQuestion" rows="2" maxlength="300" placeholder="Their answer, in their own words…"></textarea>
+                        </div>
+                    </div>
+
+                    <div id="cardsTool">
                     <div class="path-head">
                         <div class="field field-small">
                             <label for="pathLabelA" id="pathLabelALabel">Which subject or context?</label>
@@ -122,6 +155,7 @@
                     </div>
 
                     <div id="cardDrawer" class="card-drawer" hidden></div>
+                    </div>
                 </section>
 
                 <section class="panel" id="toolQuotes" aria-labelledby="quotesHeading">
@@ -129,7 +163,7 @@
                         <span class="tool-badge" data-icon="quote"></span> In their own words
                         <span class="selection-count" id="quotesCount" aria-live="polite"></span>
                     </h2>
-                    <p class="panel-intro">Type what the student actually said, as closely as you can. Their words carry the report.</p>
+                    <p class="panel-intro">Type what the student actually said, as closely as you can. Their words carry the report. Star up to three to pin them to the path itself.</p>
                     <form class="quote-composer" id="quoteForm">
                         <div class="field">
                             <label class="visually-hidden" for="quoteText">What they said</label>

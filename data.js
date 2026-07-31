@@ -205,3 +205,41 @@ export const CARDS = [
 ];
 
 export const CARD_BY_ID = Object.fromEntries(CARDS.map((c) => [c.id, c]));
+
+// ---------------------------------------------------------------------------
+// The day path — the second way of building a path with a student. Instead of
+// sorting cards, the student shapes the terrain of their own school day.
+// ---------------------------------------------------------------------------
+
+export const DAY_LABELS = [
+    "Home", "Bus", "Arrival", "Reg.", "Maths",
+    "Break", "Literacy", "Lunch", "Topic", "Reading",
+];
+
+// Light guidance for the QTVI — used on screen, never printed.
+export const DAY_PROMPTS = [
+    {
+        heading: "Opening",
+        text: "I'd like to hear about your day at school. We're going to use this path to show what it's like — the flat bits are the easy parts, and the steep bits are the harder parts.",
+    },
+    {
+        heading: "For each part of the day",
+        text: "Tell me about this time. What's it like? Is it easy or hard? What happens with your eyes?",
+    },
+    {
+        heading: "Looking for what helps",
+        text: "What makes this bit easier? Is there anything that helps?",
+    },
+    {
+        heading: "Looking for what makes it harder",
+        text: "What makes this bit harder? Is there anything you find tricky?",
+    },
+    {
+        heading: "Closing",
+        text: "If you could change one thing about your day to make it easier for your eyes, what would it be?",
+    },
+];
+
+export const CLOSING_QUESTION = "If you could change one thing about your day to make it easier for your eyes, what would it be?";
+
+export const MAX_HERO_QUOTES = 3;

@@ -18,6 +18,7 @@ export const ICONS = {
 
     // ---- UI icons ----
     check: svg('<polyline points="20 6 9 17 4 12"/>'),
+    star: svg('<polygon points="12 2.8 15 9.1 21.8 10 16.9 14.7 18.1 21.4 12 18.2 5.9 21.4 7.1 14.7 2.2 10 9 9.1"/>'),
     plus: svg('<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>'),
     x: svg('<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>'),
     printer: svg('<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>'),
