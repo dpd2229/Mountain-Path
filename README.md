@@ -13,7 +13,7 @@ There is no build step and nothing to install. The files need to be *served* ove
 
 Note that saved sessions live in the browser's `localStorage`, which is tied to the exact domain. Moving the app to a new address gives it a fresh, empty store — sessions saved on the old domain stay there. Use **Export all** on the old address and **Import** on the new one to carry them across.
 
-The only external request the page makes is for the Google Fonts stylesheet.
+The page makes no external requests. Its fonts are served from `fonts/` (Fontsource variable fonts, SIL Open Font License), so no visitor's browser contacts Google Fonts.
 
 **Everything stays on the device.** Sessions are saved to `localStorage` only; nothing is ever sent anywhere.
 
